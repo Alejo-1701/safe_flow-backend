@@ -1,13 +1,8 @@
 from rest_framework import serializers
+from .models import AutorizacionVisita
 
-# Create your serializers here.
-# Tablas del DDL que corresponden a esta app: autorizacion_visita
-#
-# Plantilla:
-# from .models import MiModelo
-#
-#
-# class MiModeloSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = MiModelo
-#         fields = '__all__'
+
+class AutorizacionVisitaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AutorizacionVisita
+        fields = '__all__'

@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'comun',
     'usuarios',
     'personas',
+    'accesos',
+    'visitas',
 ]
 
 MIDDLEWARE = [

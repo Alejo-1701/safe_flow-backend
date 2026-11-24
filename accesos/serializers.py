@@ -1,13 +1,14 @@
 from rest_framework import serializers
+from .models import Turno, RegistroAcceso
 
-# Create your serializers here.
-# Tablas del DDL que corresponden a esta app: turno, registro_acceso
-#
-# Plantilla:
-# from .models import MiModelo
-#
-#
-# class MiModeloSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = MiModelo
-#         fields = '__all__'
+
+class TurnoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Turno
+        fields = '__all__'
+
+
+class RegistroAccesoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegistroAcceso
+        fields = '__all__'
