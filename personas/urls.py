@@ -12,13 +12,13 @@ from .views import (
 )
 
 router = DefaultRouter()
-router.register("roles", RolViewSet)
-router.register("empresas", EmpresaVigilanciaViewSet)
-router.register("personas", PersonaViewSet)
-router.register("telefonos", PersonaTelefonoViewSet)
-router.register("correos", PersonaCorreoViewSet)
-router.register("administradores", AdministradorViewSet)
-router.register("guardias", GuardiaSeguridadViewSet)
-router.register("residentes", ResidenteViewSet)
+router.register("roles", RolViewSet, basename="rol")
+router.register("empresas", EmpresaVigilanciaViewSet, basename="empresavigilancia")
+router.register("personas", PersonaViewSet, basename="persona")
+router.register("telefonos", PersonaTelefonoViewSet, basename="personatelefono")
+router.register("correos", PersonaCorreoViewSet, basename="personacorreo")
+router.register("administradores", AdministradorViewSet, basename="administrador")
+router.register("guardias", GuardiaSeguridadViewSet, basename="guardiasseguridad")
+router.register("residentes", ResidenteViewSet, basename="residente")
 
 urlpatterns = router.urls
