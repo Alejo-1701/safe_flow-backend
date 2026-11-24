@@ -12,4 +12,9 @@ urlpatterns = [
     # Endpoints de los módulos de Thomas
     path('api/', include('vehiculos.urls')),
     path('api/infraestructura/', include('infraestructura.urls')),
+
+    # Endpoints de los módulos del equipo
+    path('api/comun/', include('comun.urls')),
+    path('api/usuarios/', include('usuarios.urls')),
+    path('api/personas/', include('personas.urls')),
 ]

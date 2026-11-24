@@ -36,9 +36,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
 
-    # Módulos propios (Thomas)
+    # Módulos propios y del equipo
     'vehiculos',
     'infraestructura',
+    'comun',
+    'usuarios',
+    'personas',
 ]
 
 MIDDLEWARE = [
@@ -109,6 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'es-co'
+# https://docs.djangoproject.com/en/5.2/ref/settings/#i18n
 
 TIME_ZONE = 'America/Bogota'
 
