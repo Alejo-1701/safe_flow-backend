@@ -59,3 +59,15 @@ class Parqueadero(models.Model):
 
     def __str__(self):
         return f"Celda {self.id_parqueadero} ({self.estado})"
+
+
+class AsambleaCopropietarios(models.Model):
+    id_asamblea = models.SmallAutoField(primary_key=True, db_column="id_asamblea")
+    numero_acta = models.CharField(max_length=20)
+    fecha_reunion = models.DateField()
+    art_referencia = models.CharField(max_length=30)
+    des_acuerdo = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = "asamblea_copropietarios"

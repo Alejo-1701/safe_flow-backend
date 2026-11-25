@@ -1,13 +1,23 @@
 from rest_framework import serializers
 
-# Create your serializers here.
-# Tablas del DDL que corresponden a esta app: incidentes, solicitud
-#
-# Plantilla:
-# from .models import MiModelo
-#
-#
-# class MiModeloSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = MiModelo
-#         fields = '__all__'
+from .models import Incidente, Solicitud
+
+
+class IncidenteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Incidente
+        fields = ["id_incidente", "doc_persona", "descripcion", "fecha_incidente"]
+        read_only_fields = ["id_incidente"]
+
+
+class SolicitudSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Solicitud
+        fields = [
+            "id_solicitud",
+            "doc_persona",
+            "descripcion",
+            "fecha_solicitud",
+            "estado_solicitud",
+        ]
+        read_only_fields = ["id_solicitud"]

@@ -5,8 +5,14 @@ class Notificacion(models.Model):
     id_notificacion = models.AutoField(primary_key=True, db_column="id_notificacion")
     tipo = models.CharField(max_length=30)
     mensaje = models.TextField()
-    leido = models.BooleanField(default=False)
-    numero_documento = models.CharField(max_length=10, db_column="numero_documento")
+    leido = models.BooleanField(default=False, null=True, blank=True)
+    numero_documento = models.ForeignKey(
+        "personas.Persona",
+        db_column="numero_documento",
+        to_field="num_documento",
+        on_delete=models.DO_NOTHING,
+        related_name="notificaciones",
+    )
 
     class Meta:
         managed = False

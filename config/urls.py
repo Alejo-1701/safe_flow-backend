@@ -17,8 +17,8 @@ urlpatterns = [
     path('api/comun/', include('comun.urls')),
     path('api/usuarios/', include('usuarios.urls')),
     path('api/personas/', include('personas.urls')),
-
-    # Endpoints de Juan
     path('api/accesos/', include('accesos.urls')),
     path('api/visitas/', include('visitas.urls')),
+    path('api/financiero/', include('financiero.urls')),
+    path('api/novedades/', include('novedades.urls')),
 ]

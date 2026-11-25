@@ -133,7 +133,13 @@ class Residente(models.Model):
         related_name="residente",
         primary_key=True,
     )
-    id_apartamento = models.SmallIntegerField(db_column="id_apartamento")
+    id_apartamento = models.ForeignKey(
+        "infraestructura.Apartamento",
+        db_column="id_apartamento",
+        to_field="id_apartamento",
+        on_delete=models.DO_NOTHING,
+        related_name="residentes",
+    )
 
     class Meta:
         managed = False
