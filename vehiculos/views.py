@@ -3,11 +3,7 @@ from .models import Vehiculo
 from .serializers import VehiculoSerializer
 
 
-class VehiculoViewSet(viewsets.ModelViewSet):
-    """
-    CRUD completo para la gestión de vehículos en SafeFlow.
-    Permite filtrar por ?doc_propietario=12345 o ?tipo=Carro en la URL.
-    """
+class VehiculoViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = VehiculoSerializer
 
     def get_queryset(self):
