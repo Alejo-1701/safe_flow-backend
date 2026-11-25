@@ -47,3 +47,19 @@ class NotificacionEstadoCRUDTests(APITestCaseBase):
                 "parchear": {"nuevo_estado": "Resuelto"},
             }
         )
+
+
+class NotificacionAccionesTests(APITestCaseBase):
+    def test_listar_no_leidas(self):
+        respuesta = self.client.get("/api/comun/notificaciones/no-leidas/")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        datos = respuesta.json()
+        self.assertEqual(len(datos), 1)
+        self.assertFalse(datos[0]["leido"])
+
+    def test_listar_por_notificacion(self):
+        respuesta = self.client.get("/api/comun/notificacion-estados/por-notificacion/1/")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        datos = respuesta.json()
+        self.assertEqual(len(datos), 1)
+        self.assertEqual(datos[0]["notificacion"], 1)

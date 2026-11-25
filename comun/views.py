@@ -1,5 +1,6 @@
 from django.http import Http404
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .serializers import NotificacionEstadoSerializer, NotificacionSerializer
@@ -41,6 +42,11 @@ class NotificacionViewSet(viewsets.ModelViewSet):
         NotificacionService.eliminar(self.get_object())
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(detail=False, methods=["get"], url_path="no-leidas")
+    def no_leidas(self, request):
+        queryset = NotificacionService.listar_no_leidos()
+        return Response(self.get_serializer(queryset, many=True).data)
+
 
 class NotificacionEstadoViewSet(viewsets.ModelViewSet):
     serializer_class = NotificacionEstadoSerializer
@@ -76,3 +82,8 @@ class NotificacionEstadoViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         NotificacionEstadoService.eliminar(self.get_object())
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=["get"], url_path=r"por-notificacion/(?P<id_notificacion>\d+)")
+    def por_notificacion(self, request, id_notificacion=None):
+        queryset = NotificacionEstadoService.listar_por_notificacion(id_notificacion)
+        return Response(self.get_serializer(queryset, many=True).data)
