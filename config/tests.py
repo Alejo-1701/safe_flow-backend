@@ -3,6 +3,7 @@ import inspect
 from django.apps import apps
 from django.db import models
 from django.test import SimpleTestCase
+from django.urls import NoReverseMatch, reverse
 from rest_framework import serializers
 
 from accesos import serializers as accesos_serializers
@@ -66,8 +67,24 @@ MODULOS_SERIALIZERS = (
     visitas_serializers,
 )
 
+NOMBRES_API_ROOT = (
+    "accesos-api-root",
+    "comun-api-root",
+    "financiero-api-root",
+    "infraestructura-api-root",
+    "novedades-api-root",
+    "personas-api-root",
+    "usuarios-api-root",
+    "vehiculos-api-root",
+    "visitas-api-root",
+)
+
 
 class SuperficieAPITests(APITestCaseBase):
+    def test_admin_no_esta_disponible(self):
+        respuesta = self.client.get("/admin/")
+        self.assertEqual(respuesta.status_code, 404)
+
     def test_las_23_rutas_responden_get(self):
         for ruta in RUTAS_CRUD + RUTAS_SOLO_LECTURA:
             with self.subTest(ruta=ruta):
@@ -121,3 +138,15 @@ class ContratoSerializersTests(SimpleTestCase):
                 encontrados += 1
                 self.assertNotEqual(clase.Meta.fields, "__all__", clase.__name__)
         self.assertEqual(encontrados, 23)
+
+
+class RutasApiRootTests(SimpleTestCase):
+    def test_nombres_unicos_y_reversibles(self):
+        self.assertEqual(len(NOMBRES_API_ROOT), len(set(NOMBRES_API_ROOT)))
+        for nombre in NOMBRES_API_ROOT:
+            with self.subTest(nombre=nombre):
+                self.assertTrue(reverse(nombre))
+
+    def test_no_existe_api_root_generico(self):
+        with self.assertRaises(NoReverseMatch):
+            reverse("api-root")

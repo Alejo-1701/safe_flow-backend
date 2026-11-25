@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import ApartamentoViewSet, AsambleaCopropietariosViewSet, ParqueaderoViewSet
 
 router = DefaultRouter()
+router.root_view_name = "infraestructura-api-root"
 router.register(r'apartamentos', ApartamentoViewSet, basename='apartamento')
 router.register(r'parqueaderos', ParqueaderoViewSet, basename='parqueadero')
 router.register(r'asambleas', AsambleaCopropietariosViewSet, basename='asambleacopropietarios')

@@ -12,6 +12,7 @@ from .views import (
 )
 
 router = DefaultRouter()
+router.root_view_name = "personas-api-root"
 router.register("roles", RolViewSet, basename="rol")
 router.register("empresas", EmpresaVigilanciaViewSet, basename="empresavigilancia")
 router.register("personas", PersonaViewSet, basename="persona")

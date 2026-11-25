@@ -63,3 +63,11 @@ class PerfilCRUDTests(APITestCaseBase):
         respuesta = self.client.post(URL, self.datos("123"), format="json")
         self.assertEqual(respuesta.status_code, 400, respuesta.content)
         self.assertIn("contrasenia", respuesta.json())
+
+    def test_listar_activos(self):
+        respuesta = self.client.get(f"{URL}activos/")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        datos = respuesta.json()
+        self.assertEqual(len(datos), 2)
+        self.assertTrue(all(item["estado_perfil"] for item in datos))
+        self.assertTrue(all("contrasenia" not in item for item in datos))

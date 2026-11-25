@@ -64,8 +64,11 @@ class PersonaTelefonoService(CRUDService):
         return PersonaTelefono.objects.select_related("doc_persona").order_by("doc_persona", "telefono")
 
     @staticmethod
-    def obtener(pk):
-        return PersonaTelefono.objects.filter(pk=pk).first()
+    def obtener(pk, telefono=None):
+        consulta = PersonaTelefono.objects.filter(doc_persona_id=pk)
+        if telefono:
+            consulta = consulta.filter(telefono=telefono)
+        return consulta.first()
 
     @staticmethod
     def listar_por_persona(doc_persona):
@@ -80,8 +83,11 @@ class PersonaCorreoService(CRUDService):
         return PersonaCorreo.objects.select_related("doc_persona").order_by("doc_persona", "email")
 
     @staticmethod
-    def obtener(pk):
-        return PersonaCorreo.objects.filter(pk=pk).first()
+    def obtener(pk, email=None):
+        consulta = PersonaCorreo.objects.filter(doc_persona_id=pk)
+        if email:
+            consulta = consulta.filter(email=email)
+        return consulta.first()
 
     @staticmethod
     def listar_por_persona(doc_persona):

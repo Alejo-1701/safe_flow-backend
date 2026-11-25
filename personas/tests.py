@@ -1,5 +1,5 @@
 from config.test_helpers import APITestCaseBase
-from personas.models import Persona
+from personas.models import Persona, PersonaCorreo, PersonaTelefono
 
 DOC = "TST002"
 DOC_NUEVA = "TST003"
@@ -169,3 +169,37 @@ class PersonasValidacionesTests(APITestCaseBase):
     def test_eliminar_con_dependencias_devuelve_409(self):
         respuesta = self.client.delete("/api/personas/personas/1000000001/")
         self.assertEqual(respuesta.status_code, 409, respuesta.content)
+
+
+class PersonasAccionesTests(APITestCaseBase):
+    def test_listar_por_rol(self):
+        respuesta = self.client.get("/api/personas/personas/por-rol/1/")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        self.assertEqual([item["num_documento"] for item in respuesta.json()], ["1000000001"])
+
+    def test_listar_por_empresa(self):
+        respuesta = self.client.get("/api/personas/personas/por-empresa/900123456/")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        self.assertEqual(len(respuesta.json()), 2)
+
+    def test_listar_telefonos_por_persona(self):
+        respuesta = self.client.get("/api/personas/telefonos/por-persona/1000000001/")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        self.assertEqual(len(respuesta.json()), 1)
+
+    def test_listar_correos_por_persona(self):
+        respuesta = self.client.get("/api/personas/correos/por-persona/1000000001/")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        self.assertEqual(len(respuesta.json()), 1)
+
+    def test_detalle_de_telefono_se_desambigua(self):
+        PersonaTelefono.objects.create(doc_persona_id="1000000001", telefono="3009998877")
+        respuesta = self.client.get("/api/personas/telefonos/1000000001/?telefono=3009998877")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        self.assertEqual(respuesta.json()["telefono"], "3009998877")
+
+    def test_detalle_de_correo_se_desambigua(self):
+        PersonaCorreo.objects.create(doc_persona_id="1000000001", email="ana.segunda@example.com")
+        respuesta = self.client.get("/api/personas/correos/1000000001/?email=ana.segunda@example.com")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        self.assertEqual(respuesta.json()["email"], "ana.segunda@example.com")
