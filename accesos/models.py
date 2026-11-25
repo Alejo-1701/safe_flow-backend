@@ -19,6 +19,11 @@ class Turno(models.Model):
     class Meta:
         managed = False
         db_table = "turno"
+        verbose_name = "Turno"
+        verbose_name_plural = "Turnos"
+
+    def __str__(self):
+        return f"Turno {self.id_turno} - {self.fecha_turno}"
 
 
 class RegistroAcceso(models.Model):
@@ -45,3 +50,8 @@ class RegistroAcceso(models.Model):
     class Meta:
         managed = False
         db_table = "registro_acceso"
+        verbose_name = "Registro de Acceso"
+        verbose_name_plural = "Registros de Acceso"
+
+    def __str__(self):
+        return f"Registro {self.id_registro} - Placa {self.placa_id}"

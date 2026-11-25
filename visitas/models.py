@@ -31,3 +31,8 @@ class AutorizacionVisita(models.Model):
     class Meta:
         managed = False
         db_table = "autorizacion_visita"
+        verbose_name = "Autorización de Visita"
+        verbose_name_plural = "Autorizaciones de Visita"
+
+    def __str__(self):
+        return f"Autorización {self.id_autorizacion} - {self.fecha_programada}"
