@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Apartamento, Parqueadero
+from .models import Apartamento, AsambleaCopropietarios, Parqueadero
 
 
 class ApartamentoSerializer(serializers.ModelSerializer):
@@ -42,3 +42,10 @@ class ParqueaderoSerializer(serializers.ModelSerializer):
 
     def validate_id_parqueadero(self, value):
         return value.strip().upper()
+
+
+class AsambleaCopropietariosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AsambleaCopropietarios
+        fields = ["id_asamblea", "numero_acta", "fecha_reunion", "art_referencia", "des_acuerdo"]
+        read_only_fields = ["id_asamblea"]

@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import Apartamento, Parqueadero
-from .serializers import ApartamentoSerializer, ParqueaderoSerializer
+from .models import Apartamento, AsambleaCopropietarios, Parqueadero
+from .serializers import ApartamentoSerializer, AsambleaCopropietariosSerializer, ParqueaderoSerializer
 
 
 class ApartamentoViewSet(viewsets.ModelViewSet):
@@ -41,3 +41,8 @@ class ParqueaderoViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(tipo_celda__iexact=tipo_celda)
 
         return queryset
+
+
+class AsambleaCopropietariosViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = AsambleaCopropietarios.objects.all().order_by("id_asamblea")
+    serializer_class = AsambleaCopropietariosSerializer
