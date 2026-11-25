@@ -3,11 +3,7 @@ from .models import Apartamento, AsambleaCopropietarios, Parqueadero
 from .serializers import ApartamentoSerializer, AsambleaCopropietariosSerializer, ParqueaderoSerializer
 
 
-class ApartamentoViewSet(viewsets.ModelViewSet):
-    """
-    CRUD completo para apartamentos del conjunto residencial.
-    Filtros disponibles: ?torre=A y ?doc_propietario=12345
-    """
+class ApartamentoViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ApartamentoSerializer
 
     def get_queryset(self):
@@ -23,11 +19,7 @@ class ApartamentoViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class ParqueaderoViewSet(viewsets.ModelViewSet):
-    """
-    CRUD completo para celdas de parqueadero.
-    Filtros disponibles: ?estado=Disponible y ?tipo_celda=Carro
-    """
+class ParqueaderoViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ParqueaderoSerializer
 
     def get_queryset(self):
