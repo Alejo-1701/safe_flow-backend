@@ -75,11 +75,27 @@ Solo lectura (GET) en el resto:
 
 Los listados admiten filtros por query params en vehículos, apartamentos, parqueaderos, turnos, registros de acceso y autorizaciones de visita.
 
+### Acciones de solo lectura
+
+| Ruta | Resultado |
+| --- | --- |
+| `/api/comun/notificaciones/no-leidas/` | Notificaciones sin leer |
+| `/api/comun/notificacion-estados/por-notificacion/{id}/` | Historial de una notificación |
+| `/api/usuarios/perfiles/activos/` | Perfiles activos, sin contraseña |
+| `/api/personas/personas/por-rol/{id}/` | Personas de un rol |
+| `/api/personas/personas/por-empresa/{nit}/` | Personas de una empresa |
+| `/api/personas/telefonos/por-persona/{doc}/` | Teléfonos de una persona |
+| `/api/personas/correos/por-persona/{doc}/` | Correos de una persona |
+
+El detalle de teléfonos y correos usa la documentación en la URL y admite `?telefono=` o `?email=` para elegir el registro cuando hay varios.
+
 ## Decisiones
 
 - Las tablas ya existen en Neon: los modelos usan `managed=False`, `db_table` exacto y foreign keys con `DO_NOTHING`. No se ejecutan migraciones propias.
 - La contraseña de `Perfil` se valida, se hashea con `make_password` y se expone como `write_only`.
 - Los permisos son `AllowAny` por decisión del equipo; no hay JWT ni control por roles.
+- Cada router define un `root_view_name` propio para evitar nombres duplicados.
+- `/admin/` no está expuesto: Neon no contiene las tablas de `django.contrib`.
 - Frontend y documentación de arquitectura quedan fuera de este repositorio.
 
 ## Despliegue
@@ -95,5 +111,3 @@ Los archivos estáticos de Swagger requieren servir `STATIC_ROOT` con el servido
 ## Pendientes
 
 - Paginación global: hoy las listas devuelven arreglos completos.
-- Los routers comparten el nombre `api-root`.
-- Teléfonos y correos usan una clave primaria compuesta simulada y el detalle solo alcanza el primer registro.
