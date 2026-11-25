@@ -1,3 +1,5 @@
+from config.crud import CRUDService
+
 from .models import (
     Administrador,
     EmpresaVigilancia,
@@ -10,7 +12,9 @@ from .models import (
 )
 
 
-class RolService:
+class RolService(CRUDService):
+    modelo = Rol
+
     @staticmethod
     def listar():
         return Rol.objects.all().order_by("id_rol")
@@ -20,7 +24,9 @@ class RolService:
         return Rol.objects.filter(pk=pk).first()
 
 
-class EmpresaVigilanciaService:
+class EmpresaVigilanciaService(CRUDService):
+    modelo = EmpresaVigilancia
+
     @staticmethod
     def listar():
         return EmpresaVigilancia.objects.all().order_by("nit")
@@ -30,7 +36,9 @@ class EmpresaVigilanciaService:
         return EmpresaVigilancia.objects.filter(pk=pk).first()
 
 
-class PersonaService:
+class PersonaService(CRUDService):
+    modelo = Persona
+
     @staticmethod
     def listar():
         return Persona.objects.select_related("id_rol", "nit_empresa").order_by("num_documento")
@@ -48,7 +56,9 @@ class PersonaService:
         return Persona.objects.filter(nit_empresa_id=nit).order_by("num_documento")
 
 
-class PersonaTelefonoService:
+class PersonaTelefonoService(CRUDService):
+    modelo = PersonaTelefono
+
     @staticmethod
     def listar():
         return PersonaTelefono.objects.select_related("doc_persona").order_by("doc_persona", "telefono")
@@ -62,7 +72,9 @@ class PersonaTelefonoService:
         return PersonaTelefono.objects.filter(doc_persona_id=doc_persona).order_by("telefono")
 
 
-class PersonaCorreoService:
+class PersonaCorreoService(CRUDService):
+    modelo = PersonaCorreo
+
     @staticmethod
     def listar():
         return PersonaCorreo.objects.select_related("doc_persona").order_by("doc_persona", "email")
@@ -76,7 +88,9 @@ class PersonaCorreoService:
         return PersonaCorreo.objects.filter(doc_persona_id=doc_persona).order_by("email")
 
 
-class AdministradorService:
+class AdministradorService(CRUDService):
+    modelo = Administrador
+
     @staticmethod
     def listar():
         return Administrador.objects.select_related("numero_documento").order_by("numero_documento")
@@ -86,7 +100,9 @@ class AdministradorService:
         return Administrador.objects.filter(pk=pk).first()
 
 
-class GuardiaSeguridadService:
+class GuardiaSeguridadService(CRUDService):
+    modelo = GuardiaSeguridad
+
     @staticmethod
     def listar():
         return GuardiaSeguridad.objects.select_related("numero_documento").order_by("numero_documento")
@@ -96,7 +112,9 @@ class GuardiaSeguridadService:
         return GuardiaSeguridad.objects.filter(pk=pk).first()
 
 
-class ResidenteService:
+class ResidenteService(CRUDService):
+    modelo = Residente
+
     @staticmethod
     def listar():
         return Residente.objects.select_related("numero_documento").order_by("numero_documento")

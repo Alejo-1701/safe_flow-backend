@@ -1,7 +1,11 @@
+from config.crud import CRUDService
+
 from .models import Notificacion, NotificacionEstado
 
 
-class NotificacionService:
+class NotificacionService(CRUDService):
+    modelo = Notificacion
+
     @staticmethod
     def listar():
         return Notificacion.objects.all().order_by("id_notificacion")
@@ -15,7 +19,9 @@ class NotificacionService:
         return Notificacion.objects.filter(leido=False).order_by("id_notificacion")
 
 
-class NotificacionEstadoService:
+class NotificacionEstadoService(CRUDService):
+    modelo = NotificacionEstado
+
     @staticmethod
     def listar():
         return NotificacionEstado.objects.select_related("notificacion").order_by("id_estado_hist")
