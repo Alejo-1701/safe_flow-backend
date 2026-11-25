@@ -11,7 +11,7 @@ class Incidente(models.Model):
         related_name="incidentes",
     )
     descripcion = models.TextField()
-    fecha_incidente = models.DateField()
+    fecha_incidente = models.DateField(auto_now_add=True)
 
     class Meta:
         managed = False
