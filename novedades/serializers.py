@@ -1,13 +1,17 @@
 from rest_framework import serializers
+from .models import Incidentes, Solicitud, Notificacion, NotificacionEstados
 
-# Create your serializers here.
-# Tablas del DDL que corresponden a esta app: incidentes, solicitud
-#
-# Plantilla:
-# from .models import MiModelo
-#
-#
-# class MiModeloSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = MiModelo
-#         fields = '__all__'
+class IncidentesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Incidentes
+        fields = '__all__'
+
+class SolicitudSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Solicitud
+        fields = '__all__'
+
+class NotificacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notificacion
+        fields = '__all__'

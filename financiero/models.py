@@ -9,6 +9,7 @@ class AsambleaCopropietarios(models.Model):
 
     class Meta:
         db_table = 'asamblea_copropietarios'
+        managed = False
 
 
 class Tarifa(models.Model):
@@ -23,13 +24,14 @@ class Tarifa(models.Model):
 
     class Meta:
         db_table = 'tarifa'
+        managed = False
 
 
 class Pago(models.Model):
     id_pago = models.AutoField(primary_key=True)
-    metodo_pago = models.CharField(max_length=30)  # Efectivo, Transferencia
-    fecha_pago = models.DateField(auto_now_add=True)
-    hora_pago = models.TimeField(auto_now_add=True)
+    metodo_pago = models.CharField(max_length=20)
+    fecha_caja = models.DateField(auto_now_add=True)
+    hora_caja = models.TimeField(auto_now_add=True)
     monto_total = models.DecimalField(max_digits=12, decimal_places=2)
     id_registro = models.OneToOneField(
         'accesos.RegistroAcceso',
@@ -44,6 +46,7 @@ class Pago(models.Model):
 
     class Meta:
         db_table = 'pago'
+        managed = False
 
 
 class Recaudo(models.Model):
@@ -58,9 +61,10 @@ class Recaudo(models.Model):
         on_delete=models.RESTRICT,
         db_column='id_tarifa'
     )
-    id_confirmacion = models.CharField(max_length=50, null=True, blank=True)
+    id_confirmacion = models.CharField(max_length=50, unique=True)
     subtotal = models.DecimalField(max_digits=12, decimal_places=2)
     total_pagado = models.DecimalField(max_digits=12, decimal_places=2)
 
     class Meta:
         db_table = 'recaudo'
+        managed = False

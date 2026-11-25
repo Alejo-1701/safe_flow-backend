@@ -12,6 +12,7 @@ class Incidentes(models.Model):
 
     class Meta:
         db_table = 'incidentes'
+        managed = False
 
 
 class Solicitud(models.Model):
@@ -32,6 +33,7 @@ class Solicitud(models.Model):
 
     class Meta:
         db_table = 'solicitud'
+        managed = False
 
 
 class Notificacion(models.Model):
@@ -47,6 +49,7 @@ class Notificacion(models.Model):
 
     class Meta:
         db_table = 'notificacion'
+        managed = False
 
 
 class NotificacionEstados(models.Model):
@@ -63,3 +66,4 @@ class NotificacionEstados(models.Model):
 
     class Meta:
         db_table = 'notificacion_estados'
+        managed = False
