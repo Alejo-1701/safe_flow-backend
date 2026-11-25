@@ -21,4 +21,4 @@ class NotificacionEstadoSerializer(serializers.ModelSerializer):
             "fecha_cambio",
             "hora_cambio",
         ]
-        read_only_fields = ["id_estado_hist", "fecha_cambio", "hora_cambio"]
+        read_only_fields = ["id_estado_hist"]

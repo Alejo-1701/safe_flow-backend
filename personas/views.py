@@ -1,5 +1,6 @@
 from django.http import Http404
-from rest_framework import viewsets
+from rest_framework import status, viewsets
+from rest_framework.response import Response
 
 from .serializers import (
     AdministradorSerializer,
@@ -23,7 +24,7 @@ from .services import (
 )
 
 
-class RolViewSet(viewsets.ReadOnlyModelViewSet):
+class RolViewSet(viewsets.ModelViewSet):
     serializer_class = RolSerializer
 
     def get_queryset(self):
@@ -36,8 +37,30 @@ class RolViewSet(viewsets.ReadOnlyModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        objeto = RolService.crear(serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_201_CREATED)
 
-class EmpresaVigilanciaViewSet(viewsets.ReadOnlyModelViewSet):
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instancia = self.get_object()
+        serializer = self.get_serializer(instancia, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        objeto = RolService.actualizar(instancia, serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        RolService.eliminar(self.get_object())
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class EmpresaVigilanciaViewSet(viewsets.ModelViewSet):
     serializer_class = EmpresaVigilanciaSerializer
 
     def get_queryset(self):
@@ -50,8 +73,30 @@ class EmpresaVigilanciaViewSet(viewsets.ReadOnlyModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        objeto = EmpresaVigilanciaService.crear(serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_201_CREATED)
 
-class PersonaViewSet(viewsets.ReadOnlyModelViewSet):
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instancia = self.get_object()
+        serializer = self.get_serializer(instancia, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        objeto = EmpresaVigilanciaService.actualizar(instancia, serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        EmpresaVigilanciaService.eliminar(self.get_object())
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PersonaViewSet(viewsets.ModelViewSet):
     serializer_class = PersonaSerializer
 
     def get_queryset(self):
@@ -64,8 +109,30 @@ class PersonaViewSet(viewsets.ReadOnlyModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        objeto = PersonaService.crear(serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_201_CREATED)
 
-class PersonaTelefonoViewSet(viewsets.ReadOnlyModelViewSet):
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instancia = self.get_object()
+        serializer = self.get_serializer(instancia, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        objeto = PersonaService.actualizar(instancia, serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        PersonaService.eliminar(self.get_object())
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PersonaTelefonoViewSet(viewsets.ModelViewSet):
     serializer_class = PersonaTelefonoSerializer
 
     def get_queryset(self):
@@ -78,8 +145,30 @@ class PersonaTelefonoViewSet(viewsets.ReadOnlyModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        objeto = PersonaTelefonoService.crear(serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_201_CREATED)
 
-class PersonaCorreoViewSet(viewsets.ReadOnlyModelViewSet):
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instancia = self.get_object()
+        serializer = self.get_serializer(instancia, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        objeto = PersonaTelefonoService.actualizar(instancia, serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        PersonaTelefonoService.eliminar(self.get_object())
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PersonaCorreoViewSet(viewsets.ModelViewSet):
     serializer_class = PersonaCorreoSerializer
 
     def get_queryset(self):
@@ -92,8 +181,30 @@ class PersonaCorreoViewSet(viewsets.ReadOnlyModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        objeto = PersonaCorreoService.crear(serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_201_CREATED)
 
-class AdministradorViewSet(viewsets.ReadOnlyModelViewSet):
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instancia = self.get_object()
+        serializer = self.get_serializer(instancia, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        objeto = PersonaCorreoService.actualizar(instancia, serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        PersonaCorreoService.eliminar(self.get_object())
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AdministradorViewSet(viewsets.ModelViewSet):
     serializer_class = AdministradorSerializer
 
     def get_queryset(self):
@@ -106,8 +217,30 @@ class AdministradorViewSet(viewsets.ReadOnlyModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        objeto = AdministradorService.crear(serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_201_CREATED)
 
-class GuardiaSeguridadViewSet(viewsets.ReadOnlyModelViewSet):
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instancia = self.get_object()
+        serializer = self.get_serializer(instancia, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        objeto = AdministradorService.actualizar(instancia, serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        AdministradorService.eliminar(self.get_object())
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class GuardiaSeguridadViewSet(viewsets.ModelViewSet):
     serializer_class = GuardiaSeguridadSerializer
 
     def get_queryset(self):
@@ -120,8 +253,30 @@ class GuardiaSeguridadViewSet(viewsets.ReadOnlyModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        objeto = GuardiaSeguridadService.crear(serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_201_CREATED)
 
-class ResidenteViewSet(viewsets.ReadOnlyModelViewSet):
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instancia = self.get_object()
+        serializer = self.get_serializer(instancia, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        objeto = GuardiaSeguridadService.actualizar(instancia, serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        GuardiaSeguridadService.eliminar(self.get_object())
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ResidenteViewSet(viewsets.ModelViewSet):
     serializer_class = ResidenteSerializer
 
     def get_queryset(self):
@@ -133,3 +288,25 @@ class ResidenteViewSet(viewsets.ReadOnlyModelViewSet):
             raise Http404
         self.check_object_permissions(self.request, obj)
         return obj
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        objeto = ResidenteService.crear(serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instancia = self.get_object()
+        serializer = self.get_serializer(instancia, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        objeto = ResidenteService.actualizar(instancia, serializer.validated_data)
+        return Response(self.get_serializer(objeto).data, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        ResidenteService.eliminar(self.get_object())
+        return Response(status=status.HTTP_204_NO_CONTENT)
