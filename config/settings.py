@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # Librerías de terceros
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt',
     'drf_spectacular',
 
     # Módulos propios y del equipo

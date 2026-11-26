@@ -37,5 +37,6 @@ class PerfilJWTAuthentication(JWTAuthentication):
             raise AuthenticationFailed("El perfil está inactivo.")
 
         perfil.is_authenticated = True
+        perfil.is_anonymous = False
         perfil.is_active = True
         return perfil
