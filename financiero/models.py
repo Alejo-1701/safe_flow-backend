@@ -4,7 +4,7 @@ from django.db import models
 class Tarifa(models.Model):
     id_tarifa = models.SmallAutoField(primary_key=True, db_column="id_tarifa")
     tipo_vehiculo = models.CharField(max_length=20)
-    valor_minuto = models.DecimalField(max_digits=12, decimal_places=2)
+    valor_minuto = models.DecimalField(max_digits=10, decimal_places=2)
     id_asamblea = models.ForeignKey(
         "infraestructura.AsambleaCopropietarios",
         db_column="id_asamblea",
@@ -30,6 +30,7 @@ class Pago(models.Model):
         to_field="id_registro",
         on_delete=models.DO_NOTHING,
         related_name="pagos",
+        unique=True,
     )
     id_turno = models.ForeignKey(
         "accesos.Turno",
@@ -52,6 +53,7 @@ class Recaudo(models.Model):
         to_field="id_pago",
         on_delete=models.DO_NOTHING,
         related_name="recaudos",
+        unique=True,
     )
     id_tarifa = models.ForeignKey(
         "financiero.Tarifa",
@@ -60,7 +62,7 @@ class Recaudo(models.Model):
         on_delete=models.DO_NOTHING,
         related_name="recaudos",
     )
-    id_confirmacion = models.CharField(max_length=50)
+    id_confirmacion = models.CharField(max_length=50, unique=True)
     sub_total = models.DecimalField(max_digits=12, decimal_places=2)
     total_pagado = models.DecimalField(max_digits=12, decimal_places=2)
 

@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Notificacion(models.Model):
@@ -6,6 +7,7 @@ class Notificacion(models.Model):
     tipo = models.CharField(max_length=30)
     mensaje = models.TextField()
     leido = models.BooleanField(default=False, null=True, blank=True)
+    fecha_creacion = models.DateTimeField(default=timezone.now, db_column="fecha_creacion")
     numero_documento = models.ForeignKey(
         "personas.Persona",
         db_column="numero_documento",

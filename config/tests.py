@@ -1,18 +1,23 @@
 import inspect
 
 from django.apps import apps
-from django.db import models
+from django.db import connection, models
 from django.test import SimpleTestCase
 from django.urls import NoReverseMatch, reverse
 from rest_framework import serializers
 
 from accesos import serializers as accesos_serializers
+from accesos.models import RegistroAcceso, Turno
 from comun import serializers as comun_serializers
+from comun.models import Notificacion
 from config.test_helpers import APITestCaseBase, RUTAS_CRUD, RUTAS_SOLO_LECTURA
 from financiero import serializers as financiero_serializers
+from financiero.models import Pago, Recaudo, Tarifa
 from infraestructura import serializers as infraestructura_serializers
+from infraestructura.models import Parqueadero
 from novedades import serializers as novedades_serializers
 from personas import serializers as personas_serializers
+from personas.models import Persona
 from usuarios import serializers as usuarios_serializers
 from vehiculos import serializers as vehiculos_serializers
 from visitas import serializers as visitas_serializers
@@ -124,6 +129,30 @@ class ContratoModelosTests(SimpleTestCase):
                             f"{modelo._meta.label}.{campo.name}",
                         )
         self.assertEqual(tablas, TABLAS)
+
+
+class AlineacionNeonTests(SimpleTestCase):
+    def test_restricciones_unicas(self):
+        self.assertTrue(Pago._meta.get_field("id_registro").unique)
+        self.assertTrue(Recaudo._meta.get_field("id_pago").unique)
+        self.assertTrue(Recaudo._meta.get_field("id_confirmacion").unique)
+
+    def test_tipos_de_columna(self):
+        self.assertEqual(Tarifa._meta.get_field("valor_minuto").max_digits, 10)
+        self.assertEqual(Persona._meta.get_field("id_rol").db_type(connection), "integer")
+        self.assertEqual(
+            Parqueadero._meta.get_field("id_apto_asignado").db_type(connection),
+            "integer",
+        )
+        self.assertEqual(
+            Persona._meta.get_field("tipo_documento").db_type(connection),
+            "character(2)",
+        )
+
+    def test_columnas_nuevas_de_neon(self):
+        self.assertIsNotNone(Notificacion._meta.get_field("fecha_creacion"))
+        self.assertEqual(Turno._meta.get_field("estado").default, "Abierto")
+        self.assertTrue(RegistroAcceso._meta.get_field("celda_asignada").null)
 
 
 class ContratoSerializersTests(SimpleTestCase):

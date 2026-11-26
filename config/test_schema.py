@@ -67,6 +67,7 @@ CREATE TABLE notificacion (
     tipo VARCHAR(30) NOT NULL,
     mensaje TEXT NOT NULL,
     leido BOOLEAN DEFAULT 0,
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     numero_documento VARCHAR(10) NOT NULL REFERENCES personas(num_documento) ON DELETE CASCADE
 );
 CREATE TABLE notificacion_estados (
@@ -103,6 +104,7 @@ CREATE TABLE turno (
     hora_fin TIME NOT NULL,
     recaudo_fisico NUMERIC NOT NULL,
     observaciones TEXT,
+    estado VARCHAR(30) NOT NULL DEFAULT 'Abierto',
     num_documento_guardia VARCHAR(10) NOT NULL REFERENCES personas(num_documento) ON DELETE RESTRICT
 );
 CREATE TABLE registro_acceso (
@@ -112,7 +114,8 @@ CREATE TABLE registro_acceso (
     fecha_entrada DATE NOT NULL,
     hora_entrada TIME NOT NULL,
     fecha_salida DATE,
-    hora_salida TIME
+    hora_salida TIME,
+    celda_asignada VARCHAR(20)
 );
 CREATE TABLE autorizacion_visita (
     id_autorizacion INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -185,12 +188,12 @@ FILAS = [
     ("INSERT INTO residente VALUES (?, ?)", ("1000000003", 402)),
     ("INSERT INTO parqueadero VALUES (?, ?, ?, ?)", ("P-001", "Carro", "Disponible", 402)),
     ("INSERT INTO parqueadero VALUES (?, ?, ?, ?)", ("P-002", "Moto", "Mantenimiento", None)),
-    ("INSERT INTO notificacion VALUES (?, ?, ?, ?, ?)", (1, "Acceso", "Ingreso registrado", 0, "1000000003")),
+    ("INSERT INTO notificacion VALUES (?, ?, ?, ?, ?, ?)", (1, "Acceso", "Ingreso registrado", 0, "2026-11-24 08:31:00", "1000000003")),
     ("INSERT INTO notificacion_estados VALUES (?, ?, ?, ?, ?, ?)", (1, 1, "Pendiente", 3600000000, "2026-11-24", "08:30:00")),
     ("INSERT INTO vehiculos VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", ("ABC123", "CHS-0001", "Carro", "Renault", 2022, 1600, "Blanco", "Particular", "Automovil", "1000000003")),
     ("INSERT INTO asamblea_copropietarios VALUES (?, ?, ?, ?, ?)", (1, "ACT-001", "2026-10-15", "Articulo 12", "Se aprueba la tarifa")),
-    ("INSERT INTO turno VALUES (?, ?, ?, ?, ?, ?, ?)", (1, "2026-11-24", "08:00:00", "16:00:00", 150000.00, None, "1000000002")),
-    ("INSERT INTO registro_acceso VALUES (?, ?, ?, ?, ?, ?, ?)", (1, "ABC123", 1, "2026-11-24", "09:15:00", "2026-11-24", "17:45:00")),
+    ("INSERT INTO turno VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (1, "2026-11-24", "08:00:00", "16:00:00", 150000.00, None, "Abierto", "1000000002")),
+    ("INSERT INTO registro_acceso VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (1, "ABC123", 1, "2026-11-24", "09:15:00", "2026-11-24", "17:45:00", "P-001")),
     ("INSERT INTO autorizacion_visita VALUES (?, ?, ?, ?, ?)", (1, "2026-11-26", "1000000003", "1000000001", "ABC123")),
     ("INSERT INTO tarifa VALUES (?, ?, ?, ?)", (1, "Carro", 1200.00, 1)),
     ("INSERT INTO pago VALUES (?, ?, ?, ?, ?, ?, ?)", (1, "Efectivo", "2026-11-24", "17:50:00", 10200.00, 1, 1)),

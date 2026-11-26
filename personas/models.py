@@ -1,5 +1,7 @@
 from django.db import models
 
+from config.fields import FixedCharField, IntegerForeignKey
+
 
 class Rol(models.Model):
     id_rol = models.SmallAutoField(primary_key=True, db_column="id_rol")
@@ -25,12 +27,12 @@ class EmpresaVigilancia(models.Model):
 
 class Persona(models.Model):
     num_documento = models.CharField(primary_key=True, max_length=10, db_column="num_documento")
-    tipo_documento = models.CharField(max_length=2)
+    tipo_documento = FixedCharField(max_length=2, db_column="tipo_documento")
     primer_nombre = models.CharField(max_length=50)
     segundo_nombre = models.CharField(max_length=50, null=True, blank=True)
     primer_apellido = models.CharField(max_length=50)
     segundo_apellido = models.CharField(max_length=50)
-    id_rol = models.ForeignKey(
+    id_rol = IntegerForeignKey(
         Rol,
         db_column="id_rol",
         to_field="id_rol",
