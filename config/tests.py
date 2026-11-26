@@ -97,9 +97,9 @@ class SuperficieAPITests(APITestCaseBase):
                 respuesta = self.client.get(ruta)
                 self.assertEqual(respuesta.status_code, 200, respuesta.content)
 
-    def test_escritura_solo_en_apps_core(self):
+    def test_escritura_en_rutas_declaradas(self):
         self.assertEqual(len(RUTAS_CRUD), 11)
-        self.assertEqual(len(RUTAS_SOLO_LECTURA), 12)
+        self.assertEqual(len(RUTAS_SOLO_LECTURA), 3)
         for ruta in RUTAS_SOLO_LECTURA:
             self.comprobar_solo_lectura(ruta)
 

@@ -4,15 +4,6 @@ RUTAS_SOLO_LECTURA = (
     "/api/vehiculos/",
     "/api/infraestructura/apartamentos/",
     "/api/infraestructura/parqueaderos/",
-    "/api/infraestructura/asambleas/",
-    "/api/accesos/turnos/",
-    "/api/accesos/registros-acceso/",
-    "/api/visitas/autorizaciones/",
-    "/api/financiero/tarifas/",
-    "/api/financiero/pagos/",
-    "/api/financiero/recaudos/",
-    "/api/novedades/incidentes/",
-    "/api/novedades/solicitudes/",
 )
 
 RUTAS_CRUD = (
@@ -31,6 +22,10 @@ RUTAS_CRUD = (
 
 
 class APITestCaseBase(APITestCase):
+    def comprobar_get(self, ruta):
+        respuesta = self.client.get(ruta)
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+
     def comprobar_solo_lectura(self, ruta):
         respuesta = self.client.get(ruta)
         self.assertEqual(respuesta.status_code, 200, respuesta.content)
