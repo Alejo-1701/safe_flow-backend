@@ -1,5 +1,7 @@
 from django.db import models
 
+from config.fields import FixedCharField, IntegerForeignKey
+
 
 class PersonaReferencia(models.Model):
     """
@@ -7,7 +9,7 @@ class PersonaReferencia(models.Model):
     Evita modificar la carpeta 'personas/' de otros integrantes del equipo.
     """
     num_documento = models.CharField(primary_key=True, max_length=10)
-    tipo_documento = models.CharField(max_length=2)
+    tipo_documento = FixedCharField(max_length=2)
     primer_nombre = models.CharField(max_length=50)
     segundo_nombre = models.CharField(max_length=50, blank=True, null=True)
     primer_apellido = models.CharField(max_length=50)
@@ -44,7 +46,7 @@ class Parqueadero(models.Model):
     id_parqueadero = models.CharField(primary_key=True, max_length=20)
     tipo_celda = models.CharField(max_length=20)
     estado = models.CharField(max_length=20)
-    id_apto_asignado = models.ForeignKey(
+    id_apto_asignado = IntegerForeignKey(
         Apartamento,
         on_delete=models.DO_NOTHING,
         db_column='id_apto_asignado',
