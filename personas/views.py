@@ -1,7 +1,11 @@
 from django.http import Http404
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+from .models import PersonaCorreo, PersonaTelefono
 from .serializers import (
     AdministradorSerializer,
     EmpresaVigilanciaSerializer,
@@ -136,7 +140,11 @@ class PersonaTelefonoViewSet(viewsets.ModelViewSet):
     serializer_class = PersonaTelefonoSerializer
 
     def get_queryset(self):
-        return PersonaTelefonoService.listar()
+        queryset = PersonaTelefonoService.listar()
+        doc_persona = self.request.query_params.get("doc_persona")
+        if doc_persona:
+            queryset = queryset.filter(doc_persona=doc_persona.strip())
+        return queryset
 
     def get_object(self):
         obj = PersonaTelefonoService.obtener(self.kwargs["pk"])
@@ -167,12 +175,40 @@ class PersonaTelefonoViewSet(viewsets.ModelViewSet):
         PersonaTelefonoService.eliminar(self.get_object())
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(name="doc_persona", required=True, type=str),
+            OpenApiParameter(name="telefono", required=True, type=str),
+        ],
+        request=None,
+        responses={204: None, 404: None},
+        summary="Eliminar teléfono exacto",
+    )
+    @action(detail=False, methods=["delete"], url_path="eliminar")
+    def eliminar(self, request):
+        doc_persona = request.query_params.get("doc_persona")
+        telefono = request.query_params.get("telefono")
+        if not doc_persona or not telefono:
+            raise ValidationError("Se requieren los parámetros doc_persona y telefono.")
+
+        eliminados, _ = PersonaTelefono.objects.filter(
+            doc_persona=doc_persona.strip(),
+            telefono=telefono.strip(),
+        ).delete()
+        if eliminados == 0:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class PersonaCorreoViewSet(viewsets.ModelViewSet):
     serializer_class = PersonaCorreoSerializer
 
     def get_queryset(self):
-        return PersonaCorreoService.listar()
+        queryset = PersonaCorreoService.listar()
+        doc_persona = self.request.query_params.get("doc_persona")
+        if doc_persona:
+            queryset = queryset.filter(doc_persona=doc_persona.strip())
+        return queryset
 
     def get_object(self):
         obj = PersonaCorreoService.obtener(self.kwargs["pk"])
@@ -201,6 +237,30 @@ class PersonaCorreoViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         PersonaCorreoService.eliminar(self.get_object())
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(name="doc_persona", required=True, type=str),
+            OpenApiParameter(name="email", required=True, type=str),
+        ],
+        request=None,
+        responses={204: None, 404: None},
+        summary="Eliminar correo exacto",
+    )
+    @action(detail=False, methods=["delete"], url_path="eliminar")
+    def eliminar(self, request):
+        doc_persona = request.query_params.get("doc_persona")
+        email = request.query_params.get("email")
+        if not doc_persona or not email:
+            raise ValidationError("Se requieren los parámetros doc_persona y email.")
+
+        eliminados, _ = PersonaCorreo.objects.filter(
+            doc_persona=doc_persona.strip(),
+            email=email.strip(),
+        ).delete()
+        if eliminados == 0:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

@@ -22,17 +22,17 @@ class AutorizacionVisitaSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id_autorizacion"]
 
-    def get_residente_nombre(self, obj):
+    def get_residente_nombre(self, obj) -> str | None:
         if obj.doc_residente:
             return f"{obj.doc_residente.primer_nombre} {obj.doc_residente.primer_apellido}"
         return None
 
-    def get_visitante_nombre(self, obj):
+    def get_visitante_nombre(self, obj) -> str | None:
         if obj.doc_visitante:
             return f"{obj.doc_visitante.primer_nombre} {obj.doc_visitante.primer_apellido}"
         return None
 
-    def get_vehiculo_detalle(self, obj):
+    def get_vehiculo_detalle(self, obj) -> str:
         if obj.placa_vehiculo:
             return f"{obj.placa_vehiculo.clase_vehiculo} - {obj.placa_vehiculo.linea} ({obj.placa_vehiculo.color})"
         return "Ingreso peatonal / Sin vehículo"

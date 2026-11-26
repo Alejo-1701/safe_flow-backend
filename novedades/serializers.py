@@ -21,3 +21,9 @@ class SolicitudSerializer(serializers.ModelSerializer):
             "estado_solicitud",
         ]
         read_only_fields = ["id_solicitud"]
+
+
+class CambiarEstadoRequestSerializer(serializers.Serializer):
+    estado_solicitud = serializers.ChoiceField(
+        choices=["Pendiente", "Aprobada", "Rechazada"]
+    )

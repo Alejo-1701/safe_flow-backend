@@ -4,7 +4,7 @@ from .models import AutorizacionVisita
 from .serializers import AutorizacionVisitaSerializer
 
 
-class AutorizacionVisitaViewSet(viewsets.ReadOnlyModelViewSet):
+class AutorizacionVisitaViewSet(viewsets.ModelViewSet):
     serializer_class = AutorizacionVisitaSerializer
 
     def get_queryset(self):

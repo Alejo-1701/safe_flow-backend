@@ -8,6 +8,7 @@ class Turno(models.Model):
     hora_fin = models.TimeField()
     recaudo_fisico = models.DecimalField(max_digits=12, decimal_places=2)
     observaciones = models.TextField(null=True, blank=True)
+    estado = models.CharField(max_length=30, default="Abierto")
     num_documento_guardia = models.ForeignKey(
         "personas.Persona",
         db_column="num_documento_guardia",
@@ -46,6 +47,15 @@ class RegistroAcceso(models.Model):
     hora_entrada = models.TimeField()
     fecha_salida = models.DateField(null=True, blank=True)
     hora_salida = models.TimeField(null=True, blank=True)
+    celda_asignada = models.ForeignKey(
+        "infraestructura.Parqueadero",
+        db_column="celda_asignada",
+        to_field="id_parqueadero",
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+        related_name="ingresos",
+    )
 
     class Meta:
         managed = False

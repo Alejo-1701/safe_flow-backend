@@ -6,6 +6,7 @@ class Notificacion(models.Model):
     tipo = models.CharField(max_length=30)
     mensaje = models.TextField()
     leido = models.BooleanField(default=False, null=True, blank=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
     numero_documento = models.ForeignKey(
         "personas.Persona",
         db_column="numero_documento",
