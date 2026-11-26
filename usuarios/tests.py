@@ -1,104 +1,73 @@
-from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.test import APIRequestFactory
-from rest_framework_simplejwt.tokens import RefreshToken
+from config.test_helpers import APITestCaseBase
+from personas.models import Persona
+from usuarios.models import Perfil
 
-from config.test_helpers import ApiTestCaseBase, crear_perfil
+URL = "/api/usuarios/perfiles/"
+DOC = "TST001"
+CLAVE = "ClaveSegura2026!"
+CLAVE_NUEVA = "OtraClaveSegura2026!"
 
-from .authentication import PerfilJWTAuthentication
 
-
-class LoginApiTests(ApiTestCaseBase):
-    def test_login_con_password_hasheado(self):
-        crear_perfil(contrasenia="Clave123")
-
-        response = self.client.post(
-            "/api/usuarios/login/",
-            {"num_documento": "10000001", "contrasenia": "Clave123"},
-            format="json",
+class PerfilCRUDTests(APITestCaseBase):
+    def setUp(self):
+        Persona.objects.create(
+            num_documento=DOC,
+            tipo_documento="CC",
+            primer_nombre="Soporte",
+            primer_apellido="Prueba",
+            segundo_apellido="Test",
+            id_rol_id=1,
         )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("access", response.data)
-        self.assertIn("refresh", response.data)
-        self.assertEqual(response.data["num_documento"], "10000001")
-        self.assertEqual(response.data["rol"], "Residente")
-        self.assertIn("Ana", response.data["nombre_completo"])
-        self.assertIn("Pérez", response.data["nombre_completo"])
+    def datos(self, clave=CLAVE):
+        return {"doc_persona": DOC, "contrasenia": clave, "estado_perfil": True}
 
-    def test_login_con_password_plano_temporal(self):
-        crear_perfil(num_documento="10000002", contrasenia="Clave123", hash_contrasenia=False)
-
-        response = self.client.post(
-            "/api/usuarios/login/",
-            {"num_documento": "10000002", "contrasenia": "Clave123"},
-            format="json",
+    def test_ciclo_completo(self):
+        self.ciclo_crud(
+            {
+                "url": URL,
+                "pk": "doc_persona",
+                "crear": lambda: self.datos(),
+                "actualizar": lambda pk: self.datos(CLAVE_NUEVA),
+                "parchear": {"estado_perfil": False},
+            }
         )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("access", response.data)
+    def test_contrasenia_hasheada_en_creacion(self):
+        respuesta = self.client.post(URL, self.datos(), format="json")
+        self.assertEqual(respuesta.status_code, 201, respuesta.content)
+        perfil = Perfil.objects.get(doc_persona=DOC)
+        self.assertTrue(perfil.contrasenia.startswith("pbkdf2_"))
+        self.assertNotEqual(perfil.contrasenia, CLAVE)
 
-    def test_login_contrasenia_incorrecta(self):
-        crear_perfil(contrasenia="Clave123")
+    def test_contrasenia_hasheada_en_actualizacion(self):
+        self.client.post(URL, self.datos(), format="json")
+        anterior = Perfil.objects.get(doc_persona=DOC).contrasenia
+        respuesta = self.client.put(f"{URL}{DOC}/", self.datos(CLAVE_NUEVA), format="json")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        actual = Perfil.objects.get(doc_persona=DOC).contrasenia
+        self.assertNotEqual(actual, anterior)
+        self.assertTrue(actual.startswith("pbkdf2_"))
+        self.assertNotEqual(actual, CLAVE_NUEVA)
 
-        response = self.client.post(
-            "/api/usuarios/login/",
-            {"num_documento": "10000001", "contrasenia": "Incorrecta"},
-            format="json",
-        )
+    def test_contrasenia_nunca_expuesta(self):
+        creacion = self.client.post(URL, self.datos(), format="json")
+        self.assertNotIn("contrasenia", creacion.json())
+        listado = self.client.get(URL)
+        for perfil in listado.json():
+            self.assertNotIn("contrasenia", perfil)
+        detalle = self.client.get(f"{URL}{DOC}/")
+        self.assertNotIn("contrasenia", detalle.json())
 
-        self.assertEqual(response.status_code, 401)
+    def test_contrasenia_debil_rechazada(self):
+        respuesta = self.client.post(URL, self.datos("123"), format="json")
+        self.assertEqual(respuesta.status_code, 400, respuesta.content)
+        self.assertIn("contrasenia", respuesta.json())
 
-    def test_login_perfil_inexistente(self):
-        response = self.client.post(
-            "/api/usuarios/login/",
-            {"num_documento": "99999999", "contrasenia": "Clave123"},
-            format="json",
-        )
-        self.assertEqual(response.status_code, 401)
-
-    def test_login_perfil_inactivo_devuelve_403(self):
-        crear_perfil(num_documento="10000003", contrasenia="Clave123", estado=False)
-
-        response = self.client.post(
-            "/api/usuarios/login/",
-            {"num_documento": "10000003", "contrasenia": "Clave123"},
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, 403)
-
-
-class AutenticacionJwtTests(ApiTestCaseBase):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.perfil = crear_perfil(contrasenia="Clave123")
-
-    def _token_de_acceso(self, num_documento="10000001", rol="Residente"):
-        refresh = RefreshToken()
-        refresh["user_id"] = num_documento
-        refresh["rol"] = rol
-        return str(refresh.access_token)
-
-    def test_token_resuelve_perfil_autenticado(self):
-        factory = APIRequestFactory()
-        request = factory.get(
-            "/api/usuarios/perfiles/",
-            HTTP_AUTHORIZATION=f"Bearer {self._token_de_acceso()}",
-        )
-
-        usuario, _ = PerfilJWTAuthentication().authenticate(request)
-
-        self.assertEqual(usuario.doc_persona_id, "10000001")
-        self.assertTrue(usuario.is_authenticated)
-
-    def test_token_de_perfil_inactivo_se_rechaza(self):
-        crear_perfil(num_documento="10000004", estado=False)
-        factory = APIRequestFactory()
-        request = factory.get(
-            "/api/usuarios/perfiles/",
-            HTTP_AUTHORIZATION=f"Bearer {self._token_de_acceso('10000004')}",
-        )
-
-        with self.assertRaises(AuthenticationFailed):
-            PerfilJWTAuthentication().authenticate(request)
+    def test_listar_activos(self):
+        respuesta = self.client.get(f"{URL}activos/")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        datos = respuesta.json()
+        self.assertEqual(len(datos), 2)
+        self.assertTrue(all(item["estado_perfil"] for item in datos))
+        self.assertTrue(all("contrasenia" not in item for item in datos))

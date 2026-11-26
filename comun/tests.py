@@ -1,45 +1,65 @@
-from datetime import datetime
-
-from django.utils import timezone
-
-from config.test_helpers import ApiTestCaseBase, crear_notificacion
-
-from .models import Notificacion
+from config.test_helpers import APITestCaseBase
 
 
-class NotificacionesApiTests(ApiTestCaseBase):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.vieja = crear_notificacion(tipo="Aviso", mensaje="Notificación antigua")
-        cls.nueva = crear_notificacion(tipo="Alerta", mensaje="Notificación reciente")
-
-        Notificacion.objects.filter(pk=cls.vieja.pk).update(
-            fecha_creacion=timezone.make_aware(datetime(2026, 1, 1, 8, 0))
-        )
-        Notificacion.objects.filter(pk=cls.nueva.pk).update(
-            fecha_creacion=timezone.make_aware(datetime(2026, 11, 26, 8, 0))
-        )
-
-    def test_filtro_por_numero_documento_ordena_mas_reciente_primero(self):
-        response = self.client.get(
-            "/api/comun/notificaciones/?numero_documento=10000001"
+class NotificacionCRUDTests(APITestCaseBase):
+    def test_ciclo_completo(self):
+        self.ciclo_crud(
+            {
+                "url": "/api/comun/notificaciones/",
+                "pk": "id_notificacion",
+                "crear": lambda: {
+                    "tipo": "Prueba",
+                    "mensaje": "Mensaje de prueba",
+                    "leido": False,
+                    "numero_documento": "1000000003",
+                },
+                "actualizar": lambda pk: {
+                    "tipo": "Actualizada",
+                    "mensaje": "Mensaje actualizado",
+                    "leido": True,
+                    "numero_documento": "1000000003",
+                },
+                "parchear": {"leido": False},
+            }
         )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]["id_notificacion"], self.nueva.id_notificacion)
-        self.assertEqual(response.data[1]["id_notificacion"], self.vieja.id_notificacion)
-        self.assertIn("fecha_creacion", response.data[0])
 
-    def test_listado_sin_parametro_devuelve_todas(self):
-        response = self.client.get("/api/comun/notificaciones/")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
-
-    def test_filtro_sin_coincidencias_devuelve_vacio(self):
-        response = self.client.get(
-            "/api/comun/notificaciones/?numero_documento=99999999"
+class NotificacionEstadoCRUDTests(APITestCaseBase):
+    def test_ciclo_completo(self):
+        self.ciclo_crud(
+            {
+                "url": "/api/comun/notificacion-estados/",
+                "pk": "id_estado_hist",
+                "crear": lambda: {
+                    "notificacion": 1,
+                    "nuevo_estado": "Revision",
+                    "duracion": "01:00:00",
+                    "fecha_cambio": "2026-11-25",
+                    "hora_cambio": "09:00:00",
+                },
+                "actualizar": lambda pk: {
+                    "notificacion": 1,
+                    "nuevo_estado": "Proceso",
+                    "duracion": "02:00:00",
+                    "fecha_cambio": "2026-11-25",
+                    "hora_cambio": "10:00:00",
+                },
+                "parchear": {"nuevo_estado": "Resuelto"},
+            }
         )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 0)
+
+
+class NotificacionAccionesTests(APITestCaseBase):
+    def test_listar_no_leidas(self):
+        respuesta = self.client.get("/api/comun/notificaciones/no-leidas/")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        datos = respuesta.json()
+        self.assertEqual(len(datos), 1)
+        self.assertFalse(datos[0]["leido"])
+
+    def test_listar_por_notificacion(self):
+        respuesta = self.client.get("/api/comun/notificacion-estados/por-notificacion/1/")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+        datos = respuesta.json()
+        self.assertEqual(len(datos), 1)
+        self.assertEqual(datos[0]["notificacion"], 1)

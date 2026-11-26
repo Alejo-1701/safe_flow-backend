@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import PagoViewSet, RecaudoViewSet, TarifaViewSet
 
 router = DefaultRouter()
+router.root_view_name = "financiero-api-root"
 router.register(r"tarifas", TarifaViewSet, basename="tarifa")
 router.register(r"pagos", PagoViewSet, basename="pago")
 router.register(r"recaudos", RecaudoViewSet, basename="recaudo")

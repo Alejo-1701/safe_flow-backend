@@ -1,47 +1,21 @@
-from config.test_helpers import ApiTestCaseBase, crear_asamblea
+from config.test_helpers import APITestCaseBase
 
 
-class AsambleaApiTests(ApiTestCaseBase):
-    def test_asamblea_acepta_post_put_patch_y_rechaza_delete(self):
-        response = self.client.post(
+class InfraestructuraSoloLecturaTests(APITestCaseBase):
+    def test_solo_lectura(self):
+        for ruta in (
+            "/api/infraestructura/apartamentos/",
+            "/api/infraestructura/parqueaderos/",
             "/api/infraestructura/asambleas/",
-            {
-                "numero_acta": "ACT-002",
-                "fecha_reunion": "2026-11-20",
-                "art_referencia": "Art. 8",
-                "des_acuerdo": "Acuerdo de prueba",
-            },
-            format="json",
-        )
-        self.assertEqual(response.status_code, 201)
-        id_asamblea = response.data["id_asamblea"]
+        ):
+            self.comprobar_solo_lectura(ruta)
 
-        response = self.client.put(
-            f"/api/infraestructura/asambleas/{id_asamblea}/",
-            {
-                "numero_acta": "ACT-002",
-                "fecha_reunion": "2026-11-20",
-                "art_referencia": "Art. 9",
-                "des_acuerdo": "Acuerdo actualizado",
-            },
-            format="json",
-        )
-        self.assertEqual(response.status_code, 200)
+    def test_filtro_de_apartamentos_por_torre(self):
+        respuesta = self.client.get("/api/infraestructura/apartamentos/", {"torre": "A"})
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertEqual(len(respuesta.json()), 1)
 
-        response = self.client.patch(
-            f"/api/infraestructura/asambleas/{id_asamblea}/",
-            {"des_acuerdo": "Acuerdo parcheado"},
-            format="json",
-        )
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.delete(
-            f"/api/infraestructura/asambleas/{id_asamblea}/"
-        )
-        self.assertEqual(response.status_code, 405)
-
-    def test_asamblea_existente_se_listaba(self):
-        crear_asamblea()
-        response = self.client.get("/api/infraestructura/asambleas/")
-        self.assertEqual(response.status_code, 200)
-        self.assertGreaterEqual(len(response.data), 1)
+    def test_filtro_de_parqueaderos_por_estado(self):
+        respuesta = self.client.get("/api/infraestructura/parqueaderos/", {"estado": "Disponible"})
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertEqual([item["id_parqueadero"] for item in respuesta.json()], ["P-001"])

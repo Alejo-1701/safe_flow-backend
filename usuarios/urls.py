@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import LoginView, PerfilViewSet
 
 router = DefaultRouter()
+router.root_view_name = "usuarios-api-root"
 router.register("perfiles", PerfilViewSet, basename="perfil")
 
 urlpatterns = [
