@@ -11,7 +11,11 @@ class NotificacionViewSet(viewsets.ModelViewSet):
     serializer_class = NotificacionSerializer
 
     def get_queryset(self):
-        return NotificacionService.listar()
+        queryset = NotificacionService.listar().order_by("-fecha_creacion", "-id_notificacion")
+        numero_documento = self.request.query_params.get("numero_documento")
+        if numero_documento:
+            queryset = queryset.filter(numero_documento=numero_documento.strip())
+        return queryset
 
     def get_object(self):
         obj = NotificacionService.obtener(self.kwargs["pk"])

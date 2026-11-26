@@ -37,3 +37,18 @@ class RecaudoSerializer(serializers.ModelSerializer):
             "total_pagado",
         ]
         read_only_fields = ["numero_factura"]
+
+
+class ArqueoRequestSerializer(serializers.Serializer):
+    id_turno = serializers.IntegerField()
+    recaudo_fisico = serializers.DecimalField(max_digits=12, decimal_places=2)
+    observaciones = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
+
+
+class ArqueoResponseSerializer(serializers.Serializer):
+    total_sistema = serializers.DecimalField(max_digits=12, decimal_places=2)
+    recaudo_fisico = serializers.DecimalField(max_digits=12, decimal_places=2)
+    diferencia = serializers.DecimalField(max_digits=12, decimal_places=2)
+    estado = serializers.CharField(max_length=30)

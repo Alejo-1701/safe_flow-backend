@@ -35,6 +35,7 @@ class ParqueaderoViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
-class AsambleaCopropietariosViewSet(viewsets.ReadOnlyModelViewSet):
+class AsambleaCopropietariosViewSet(viewsets.ModelViewSet):
     queryset = AsambleaCopropietarios.objects.all().order_by("id_asamblea")
     serializer_class = AsambleaCopropietariosSerializer
+    http_method_names = ["get", "post", "put", "patch", "head", "options"]

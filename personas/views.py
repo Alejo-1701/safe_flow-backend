@@ -1,8 +1,10 @@
 from django.http import Http404
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from .models import PersonaCorreo, PersonaTelefono
 from .serializers import (
     AdministradorSerializer,
     EmpresaVigilanciaSerializer,

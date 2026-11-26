@@ -16,7 +16,7 @@ class ApartamentoSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id_apartamento']
 
-    def get_propietario_nombre(self, obj):
+    def get_propietario_nombre(self, obj) -> str | None:
         if obj.doc_propietario:
             return f"{obj.doc_propietario.primer_nombre} {obj.doc_propietario.primer_apellido}"
         return None
@@ -35,7 +35,7 @@ class ParqueaderoSerializer(serializers.ModelSerializer):
             'apartamento_detalle',
         ]
 
-    def get_apartamento_detalle(self, obj):
+    def get_apartamento_detalle(self, obj) -> str:
         if obj.id_apto_asignado:
             return f"Torre {obj.id_apto_asignado.torre} - Apto {obj.id_apto_asignado.numero_apto}"
         return "Sin asignar / Visitantes"

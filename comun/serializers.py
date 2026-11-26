@@ -6,8 +6,15 @@ from .models import Notificacion, NotificacionEstado
 class NotificacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notificacion
-        fields = ["id_notificacion", "tipo", "mensaje", "leido", "numero_documento"]
-        read_only_fields = ["id_notificacion"]
+        fields = [
+            "id_notificacion",
+            "tipo",
+            "mensaje",
+            "leido",
+            "fecha_creacion",
+            "numero_documento",
+        ]
+        read_only_fields = ["id_notificacion", "fecha_creacion"]
 
 
 class NotificacionEstadoSerializer(serializers.ModelSerializer):
